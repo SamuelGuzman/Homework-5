@@ -1,0 +1,325 @@
+---
+title: "Homework 5 Markdown"
+author: "Samuel Guzman"
+date: "10/12/2020"
+output: html_document
+---
+
+1a. Display the association between the two variables in a scatter plot.
+```{r first_chunk}
+# DETERMINING AXES
+# Based on the question, the 22 native Italian speakers who had learned English were first tested to determine proficiency, and then their Grey-matter densities were measured. 
+# Proficiency is the independent variable and therefore X axis, because it is subject to human choice. 
+# Greymatter is the dependent variable and therefore Y axis, because values are determined.
+
+library(ggplot2)
+data_Q1 <- read.csv("chap16q15LanguageGreyMatter.csv") #get data from csv file
+pen_plot_base_Q1 <- ggplot(data = data_Q1,
+                        mapping = aes(x = proficiency,
+                                      y = greymatter))
+
+pen_plot_base_Q1 +
+  geom_point(size = 3,
+             color = "blue")
+```
+
+1b. Calculate the correlation between second language proficiency and gray-matter density.
+
+```{r second_chunk}
+# Use Pearson's correlation coefficient (r) for correlation
+
+data_Q1_df <- as.list(data_Q1) #convert to list is needed to prevent error
+cor.test(data_Q1_df$proficiency, data_Q1_df$greymatter, method = "pearson") #Use cor.test function for Pearson's r
+```
+
+The correlation value is 0.8183134
+
+1c. Test the null hypothesis of zero correlation.
+
+```{r third_chunk}
+cor.test(data_Q1_df$proficiency, data_Q1_df$greymatter, method = "pearson")
+```
+
+The alternative hypothesis is that proficiency and greymatter are correlated. The null hypothesis is that the variables are not correlated.A lower p-value means that there is a greater chance of the null hypothesis being false. According to cor.test, the p-value is 3.264e-06. This is quite small, and even smaller than 0.05, so  the null hypothesis is likely false. It is likely reasonable to falsify the idea that the variables are not correlated.
+
+1d. What are your assumptions in part(c)?
+
+It can still be consistent that the null hypothesis is true, but that is very unlikely. The p-value is 3.264e-06 and still allows for this in an unlikely case. Saying "the null hypothesis can be falsified" is simplifying or rounding it down. Something along the lines of, "While, there is a small chance, it is basically zero".
+
+1e. Does the scatter plot support these assumptions? Explain.
+
+The scatter plot does support the assumptions. In the scatter plot, the values appear correlated. Likewise, the null hypothesis test of zero correlation tells us that it is probably not the case that they are not correlated.
+
+1f. Do the results demonstrate that second language proficiency affects gray-matter density in the brain? Why or why not?
+
+The results do not demonstrate with certainty that second language proficiency affects gray-matter density. For instance, the directionality of the relationship has not been proven. Instead of language proficiency causing greater gray-matter density, people with high gray-matter density could be more willing to learn a second language. There are other reasons why correlation could exist without a causal link at all. For that reason, it is more reasonable to claim assosiation rather than cause. I think the results warrant greater credibility to the idea though.
+
+2a. Calculate the correlation coefficient between the taurocholate unbound fraction and the concentration.
+
+```{r fourth_chunk}
+data_Q2 <- read.csv("chap16q19LiverPreparation.csv") #get data from csv file
+#correlation coefficient refers to Pearson's correlation coefficient (r)
+data_Q2_df <- as.list(data_Q2) #convert to list is needed to prevent error
+
+cor.test(data_Q2_df$concentration, data_Q2_df$unboundFraction, method = "pearson") #Use cor.test function for Pearson's r
+```
+The correlation coefficient is -0.8563765
+
+2b. Plot the relationship between the two variables in a graph.
+
+```{r fifth_chunk}
+
+pen_plot_base_Q2 <- ggplot(data = data_Q2,
+                        mapping = aes(x = concentration,
+                                      y = unboundFraction))
+
+pen_plot_base_Q2 +
+  geom_point(size = 3,
+             color = "blue")
+
+```
+
+2c. Examine the plot in part (b). The relationship appears to be maximally strong, yet the correlation coefficient you calculated in part (a) is not near the maximum possible value. Why or why not?
+
+Correlation coefficient can range from -1 to 1. In 2a, it was calculated to be -0.8563765, which is somewhat close to -1. While it is not close to the maximum possible, it is somewhat close to the minimum possible. This reveals a somewhat strong inverse correlation.
+
+2d. What steps would you take with these data to meet the assumptions of correlation analysis?
+
+I do not have the book at present, but it is being sent to me. But I used this page.
+
+According to https://www.statisticssolutions.com/pearson-correlation-assumptions/#:~:text=The%20assumptions%20are%20as%20follows%3A%20level%20of%20measurement%2C,then%20a%20Spearman%20correlation%20could%20be%20conducted%20instead.
+
+The assumptions of Pearson Corellation Analysis are:
+
++ Measurement: From the article, "For a Pearson correlation, each variable should be continuous". This means that the value can be one of an infinite variety of values within a given range. So, within 0-1, it could be 0.5 or 0.5001 or 0.50001. 
+
++ Related pairs: From the article, "Related pairs refers to the pairs of variables. Each participant or observation should have a pair of values. So if the correlation was between weight and height, then each observation used should have both a weight and a height value." In my own words, this means that the data points hold two values (on a graph this would be the x and y axis) and they are related in some way.
+
++ Absence of outliers: From the article, "Absence of outliers refers to not having outliers in either variable". The reason why there should not be outliers is because "Having an outlier can skew the results of the correlation by pulling the line of best fit formed by the correlation too far in one direction or another". While this criterion exists, it would not be good practice to remove the outlier, because it could be a valid data point, it isn't necessarily indicative of measurement error. 
+
++ linearity: To meet the linearity criterion, "a 'straight line' relationship between the variable should be formed". The data in the graph actually is not linear, therefore it does not fulfill this criterion.
+
+Other sources:
+https://en.wikipedia.org/wiki/Continuous_or_discrete_variable#:~:text=A%20continuous%20variable%20is%20one%20which%20can%20take,can%20take%20on%20any%20value%20in%20that%20range.
+
+3. Correlation SE.
+
+3a. Are these two variables correlated? What is the output of cor() here. What does a test show you?
+
+```{r sixth_chunk}
+#First, I am going to put the data into a data frame
+cats_vec <- c(-0.30, 0.42, 0.85, -0.45, 0.22, -0.12, 1.46, -0.79, 0.40, -0.07)
+happiness_score_vec <- c(-0.57, -0.10, -0.04, -0.29, 0.42, -0.92, 0.99, -0.62, 1.14, 0.33)
+cats_df <- data.frame(cats = cats_vec, happiness_score = happiness_score_vec)
+
+# Run cor()
+cor(cats_df$cats, cats_df$happiness_score)
+
+# Run cor.test()
+cor.test(cats_df$cats, cats_df$happiness_score, method = "pearson")
+```
+
+First, we can tell that the value for both cor() and cor.test() (particularly, underneath where it says cor) are the same value (0.6758738 in both cases). This probably means they are the same thing.
+
+Next, I will test the null hypothesis of zero correlation, similar to how I did this in 1c. The alternative hypothesis is that cats and happiness_score are correlated. The null hypothesis is that the variables are not correlated. According to cor.test, the p-value is 0.03193. This is less than 0.05, therefore the null hypothesis ("the variables are not correlated") can be rejected. It is not the case that the variables are not correlated. The two variables are correlated.
+
+3b. What is the SE of the correlation based on the info from cor.test().
+
+According to https://stats.stackexchange.com/questions/73621/standard-error-from-correlation-coefficient, there exists an equation which is SE_r = sqrt((1-((r)^2))/(n-2)). r is the correlation coefficient (0.6758738 in this case), and n is number of sample points. The forum poster claims, "This will produce inaccurate results in some cases and may produce impossible out of range confidence intervals. But for most cases, it's fine".
+
+```{r seventh_chunk}
+r <- 0.6758738
+n <- length(cats_vec)
+
+SE_r <- sqrt((1-((r)^2))/(n-2))
+SE_r
+
+```
+
+The standard error of the correlation is 0.260575.
+
+3c. Now, what is the SE via simulation? To do this, you'll need to use cor() and get the relevant parameter from the output (remember - you get a matrix back, so, what's the right index!), replicate(), and sample() or dplyr::sample_n() with replace = TRUE to get, let's say, 1000 correlations. How does this compare to your value above?
+
+```{r eighth_chunk}
+library(dplyr)
+correlations_1000 <- replicate(1000, cor(sample_n(cats_df, size = nrow(cats_df), replace = TRUE))[1,2]) #[1,2] is to get the correct values from the matrix
+
+sd(correlations_1000)
+
+```
+
+I calculated a standard error of 0.1617459. The values are relatively close.
+
+4. W&S Chapter 17
+
+4a. Draw a scatter plot of these data. Which variable should be the explanatory variable (X) and which should be the response variable (Y)?
+
+```{r ninth_chunk}
+data_Q4 <- read.csv("chap17q19GrasslandNutrientsPlantSpecies.csv") #get data from csv file
+data_Q4_df <- as.list(data_Q4) #convert to list as precautionary measure to prevent error
+
+#PLOTTING THE DATA
+
+#For determining the axes, number of plant species is the response variable (Y). This is because its value is determined from the experiment. Number of nutrients is the explanatory variable (X). This is because in theory there exists choice over it.
+
+pen_plot_base_Q4 <- ggplot(data = data_Q4,
+                        mapping = aes(x = nutrients,
+                                      y = species))
+
+pen_plot_base_Q4 +
+  geom_point(size = 3,
+             color = "blue")
+
+
+
+
+```
+
+For determining the axes, number of plant species is the response variable (Y). This is because its value is determined from the experiment. Number of nutrients is the explanatory variable (X). This is because in theory there exists choice over it.
+
+4b. What is the rate of change in the number of plant species supported per nutrient type added? Provide a standard error for your estimate.
+
+```{r tenth_chunk}
+cor(data_Q4) #correlation is -0.7321056
+
+r <- -0.7321056
+n <- length(data_Q4$nutrients)
+SE_r <- sqrt((1-((r)^2))/(n-2))
+SE_r
+
+#Regarding, the "rate of change in the number of plant species supported per nutrient type added", this just means the slope of the data.
+intercept_and_slope <- lm(data = data_Q4, species~nutrients) #get intercept and slope
+
+```
+
+The standard error for the estimate is 0.2408374. The rate of change in the number of plant species supported per nutrient type added is -3.339. This means that for every 1 nutrient type that is added, 3.339 fewer plant species are supported.
+
+4c. Add the least-squares regression line to your scatter plot. What fraction of the variation in the number of plant species is "explained" by the number of nutrients added?
+
+```{r eleventh_chunk}
+# the function lm() does use the least-squares method of regression. So, this line is the correct regression line.
+
+pen_plot_base_Q4 <- ggplot(data = data_Q4,
+                        mapping = aes(x = nutrients,
+                                      y = species))
+
+pen_plot_base_Q4 +
+  geom_point(size = 3,
+             color = "blue") + 
+  geom_line(fortify(intercept_and_slope), mapping = aes(x = nutrients, y = .fitted))
+
+```
+
+To answer the question "What fraction of the variation in the number of plant species is "explained" by the number of nutrients added?", this is simply the value r^2. This is (-0.7321056)^2. This calculates to be 0.5359786. About 53% of the variation is explained by the number of nutrients added.
+
+```{r twelth_chunk}
+(-0.7321056)^2
+```
+
+4d. Test the null hypothesis of no treatment effect on the number of plant species.
+
+I am assuming that testing the "null hypothesis of no treatment effect on the number of plant species" is the same as testing the "the null hypothesis of zero correlation."
+
+```{r thirteenth_chunk}
+cor.test(data_Q4_df$nutrients, data_Q4_df$species, method = "pearson")
+```
+
+5. W&S Chapter 17-25.
+
+5a. Use these results to calculate the residuals.
+
+```{r fourteenth_chunk}
+data_Q5 <- read.csv("chap17q25BeetleWingsAndHorns.csv") #get data from csv file
+data_Q5_df <- data.frame(horn_size = data_Q5[,1], wing_mass = data_Q5[,2])
+
+# According to: https://www.thoughtco.com/what-are-residuals-3126253#:~:text=The%20formula%20for%20residuals%20is%20straightforward%3A%20Residual%20%3D,The%20observed%20value%20comes%20from%20our%20data%20set.
+# The formula to calculate residuals is
+# Residual = observed y (original data value) – predicted y (value from regression line) 
+
+# https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/residuals
+# However, there is also a function in R, which is more convenient
+# residuals()
+# The value it returns is "Residuals extracted from the object", so, the residuals.
+
+regression.line = lm(data_Q5_df$horn_size~data_Q5_df$wing_mass)
+Q5_residuals <- residuals(regression.line)
+Q5_residuals
+```
+
+5b. Use your results from part (a) to produce a residual plot.
+
+```{r fifteenth_chunk}
+data_Q5_df_2 <- data.frame(horn_size = data_Q5[,1], residual = Q5_residuals)
+
+pen_plot_base_Q5 <- ggplot(data = data_Q5_df_2,
+                        mapping = aes(x = horn_size,
+                                      y = Q5_residuals))
+
+pen_plot_base_Q5 +
+  geom_point(size = 3,
+             color = "blue")
+```
+
+5c. Use the graph provided and your residual plot to evaluate the main assumptions of linear regression.
+
+According to the textbook, the four assumptions of regression are 
+
+1. At each value of X, there is a population of possible Y-values whose mean lies on the true regression line (this is the assumption that the relationship must be linear).
+2. At each value of X, the distribution of possible Y-values is normal.
+3. The variance of Y-values is the same at all values of X
+4. At each value of X, the Y-measurements represent a random sample from the population of possible Y-values.
+
+The first 2 assumptions have to do with the original data graph. 
+1. It is unclear if the data is linear. There appears to be a curve. If the data has a curve, it is not linear and therefore does not meet the first assumption.
+2. In this context, since it involves a normal distribution, it would imply that the chance of a data point being above or below the regression line is equal (50% - 50%). Just looking at the graph, while the number of points above and below is at least roughly equal, there are also parts where it consistently goes above the line. In one case, it is above 5 times in a row for a region of X. There may be a way to test to know for sure. More analysis is needed to determine if this assumption is met.
+
+The second 2 assumptions have to do with the residual plot.
+These criteria must be met:
++ "symmetrical cloud of points above and below zero"
+
+The points in the residual plot are not symmetrical. This criterion is not met. 
+
++ "little noticeable curvature" when moving from left to right along X
+
+There is a small amount of curvature in the residual plot. I am not sure if this is enough to not fulfill this criterion (so, it could fulfill this assumption).
+
++ "Aprroximately equal variance of points above and below the line"
+
+The spread of the data is unequal (for instance, the center points are spread much closer to the 0 line, and there is more variance on the left and right sides of the chart). This contradicts this assumption.
+
+5d. In light of your conclusions in part(c), what steps should be taken?
+
+In some instances, it is quite clear that the assumptions are not met. In others, it is questionable. For these reasons, I don't think linear regression is warranted.
+
+5e. Do any other diagnostics misbehave?
+
+I don't know.
+
+6. W&S Chapter 17-30
+
+6a. What is the approximate slope of the regression line?
+
+The solid line is the regression line. The slope appears to be downward (negative slope), and the date of birth decreases by about 20 for every 200 delta_C14. The slope is approximately -0.1years/delta_C14.
+
+6b. Which pair of lines shows the confidence bands? What do these confidence bands tell us? 
+The pair of lines that are closest to the regression line are the confidence bands. This tells us that the actual curve has a 95% chance of being within this range. 
+
+6c. Which pair of lines shows the prediction interval? What does this prediction interval tell us?
+The pair of lines that are farther away from the regression line are the prediction interval. The prediction interval is the interval for which 95% of future data points are predicted to fall within.
+
+6d. Using predict() and geom_ribbon() in ggplot2, reproduce the above plot showing data, fit, fit interval, and prediction interval.
+
+```{r sixteenth_chunk}
+data_Q6 <- read.csv("chap17q30NuclearTeeth.csv") #get data from csv file
+data_Q6_df_2 <- data.frame(delta_C14 = data_Q6[,2], date_of_Birth = data_Q6[,1])
+
+pen_plot_base_Q6 <- ggplot(data = data_Q6_df_2,
+                        mapping = aes(x = delta_C14,
+                                      y = date_of_Birth))
+
+pen_plot_base_Q6 +
+  geom_point(size = 3,
+             color = "blue")
+
+```
+
